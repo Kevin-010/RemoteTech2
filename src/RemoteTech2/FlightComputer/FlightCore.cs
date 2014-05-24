@@ -107,8 +107,13 @@ namespace RemoteTech
             double thrust = 0.0;
             foreach (var pm in v.parts.SelectMany(p => p.FindModulesImplementing<ModuleEngines>()))
             {
-                if (!pm.EngineIgnited) continue;
-                thrust += pm.maxThrust;
+                if (pm.EngineIgnited)
+                    thrust += (double) pm.maxThrust;
+            }
+            foreach (var pm in v.parts.SelectMany(p => p.FindModulesImplementing<ModuleEnginesFX>()))
+            {
+                if (pm.EngineIgnited)
+                    thrust += (double) pm.maxThrust;
             }
             return thrust;
         }
