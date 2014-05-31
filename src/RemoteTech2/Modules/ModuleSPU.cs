@@ -88,6 +88,10 @@ namespace RemoteTech
 
             if (!IsRTPowered)
             {
+                if(vessel.ctrlState.mainThrottle > 0 )
+                {
+                    vessel.ctrlState.mainThrottle = 0.0f; //todo fix bouncing
+                }
                 return State.ParentDefect;
             }
 
@@ -113,6 +117,8 @@ namespace RemoteTech
                     GUI_Status = "Operational.";
                     break;
                 case State.ParentDefect:
+                    GUI_Status = "Parent Defect.";
+                    break;
                 case State.NoConnection:
                     GUI_Status = "No connection.";
                     break;
@@ -159,10 +165,16 @@ namespace RemoteTech
                     {
                         vs.SignalProcessor.FlightComputer.Enqueue(EventCommand.Event(e));
                     }
+                }else if(e.name=="EventTarget" || e.name=="EventOpen")
+                {
+                    ScreenMessages.PostScreenMessage(new ScreenMessage("W: low bandwidth override command", 4.0f, ScreenMessageStyle.UPPER_LEFT));
+                    e.Invoke();
                 }
                 else
                 {
-                    ScreenMessages.PostScreenMessage(new ScreenMessage("No connection to send command on.", 4.0f, ScreenMessageStyle.UPPER_LEFT));
+                    ScreenMessages.PostScreenMessage(new ScreenMessage(string.Format("No connection to send command ({0}) on.",e.name), 4.0f, ScreenMessageStyle.UPPER_LEFT));
+                    //print(e);
+                    
                 }
             });
         }
